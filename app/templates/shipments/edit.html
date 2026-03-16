@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+
+{% block title %}Редагувати shipment{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <p class="page-kicker">Відправки</p>
+        <h2 class="page-title">Редагувати shipment</h2>
+        <p class="page-subtitle">{{ shipment.code }}</p>
+    </div>
+</div>
+
+<section class="section-block">
+    <div class="form-card">
+        <form method="post" action="/web/shipments/{{ shipment.id }}/edit" class="form-grid">
+            <div class="form-group">
+                <label>Код</label>
+                <input type="text" name="code" value="{{ shipment.code }}" required>
+            </div>
+
+            <div class="form-group">
+                <label>Перевізник</label>
+                <input type="text" name="carrier_name" value="{{ shipment.carrier_name or '' }}">
+            </div>
+
+            <div class="form-group">
+                <label>Дата створення</label>
+                <input type="date" name="created_date" value="{{ shipment.created_date }}" required>
+            </div>
+
+            <div class="form-group">
+                <label>Дата відправки</label>
+                <input type="date" name="sent_date" value="{{ shipment.sent_date or '' }}">
+            </div>
+
+            <div class="form-group">
+                <label>Дата прибуття</label>
+                <input type="date" name="arrival_date" value="{{ shipment.arrival_date or '' }}">
+            </div>
+
+            <div class="form-group">
+                <label>Трек номер</label>
+                <input type="text" name="tracking_number" value="{{ shipment.tracking_number or '' }}">
+            </div>
+
+            <div class="form-group">
+                <label>Статус</label>
+                <select name="status" required>
+                    <option value="collecting" {% if shipment.status == 'collecting' %}selected{% endif %}>collecting</option>
+                    <option value="sent" {% if shipment.status == 'sent' %}selected{% endif %}>sent</option>
+                    <option value="in_transit" {% if shipment.status == 'in_transit' %}selected{% endif %}>in_transit</option>
+                    <option value="arrived" {% if shipment.status == 'arrived' %}selected{% endif %}>arrived</option>
+                    <option value="closed" {% if shipment.status == 'closed' %}selected{% endif %}>closed</option>
+                    <option value="problem" {% if shipment.status == 'problem' %}selected{% endif %}>problem</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Default carrier fee</label>
+                <input type="number" step="0.01" name="default_carrier_fee" value="{{ shipment.default_carrier_fee }}" required>
+            </div>
+
+            <div class="form-group full-width">
+                <label>Нотатка</label>
+                <textarea name="note" rows="3">{{ shipment.note or '' }}</textarea>
+            </div>
+
+            <div class="form-actions full-width">
+                <button type="submit" class="btn btn-primary">Зберегти</button>
+                <a href="/web/shipments" class="btn btn-secondary">Назад</a>
+            </div>
+        </form>
+    </div>
+</section>
+{% endblock %}

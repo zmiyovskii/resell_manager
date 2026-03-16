@@ -1,0 +1,176 @@
+{% extends "base.html" %}
+
+{% block title %}Телефони{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <p class="page-kicker">Телефони</p>
+        <h2 class="page-title">Список телефонів</h2>
+        <p class="page-subtitle">
+            Усі телефони в системі зі статусами, собівартістю, продажем і прибутком.
+        </p>
+    </div>
+</div>
+
+<div class="quick-actions">
+    <a href="/web/phones/create" class="btn btn-primary">Додати телефон</a>
+</div>
+
+<div class="toolbar-card">
+    <form method="get" action="/web/phones" class="search-form">
+        <input type="text" name="q" value="{{ q }}" placeholder="Пошук по моделі або пам’яті...">
+        <input type="hidden" name="status_filter" value="{{ status_filter }}">
+        <button type="submit" class="btn btn-secondary">Шукати</button>
+    </form>
+</div>
+
+<div class="filters-bar">
+    <a href="/web/phones?status_filter=all&q={{ q }}" class="filter-chip {% if status_filter == 'all' %}active{% endif %}">Усі</a>
+    <a href="/web/phones?status_filter=active&q={{ q }}" class="filter-chip {% if status_filter == 'active' %}active{% endif %}">Активні</a>
+    <a href="/web/phones?status_filter=sold&q={{ q }}" class="filter-chip {% if status_filter == 'sold' %}active{% endif %}">Продані</a>
+    <a href="/web/phones?status_filter=in_shipment&q={{ q }}" class="filter-chip {% if status_filter == 'in_shipment' %}active{% endif %}">У відправці</a>
+    <a href="/web/phones?status_filter=repair&q={{ q }}" class="filter-chip {% if status_filter == 'repair' %}active{% endif %}">У ремонті</a>
+    <a href="/web/phones?status_filter=ready&q={{ q }}" class="filter-chip {% if status_filter == 'ready' %}active{% endif %}">Готові</a>
+    <a href="/web/phones?status_filter=profit&q={{ q }}" class="filter-chip {% if status_filter == 'profit' %}active{% endif %}">Прибуткові</a>
+    <a href="/web/phones?status_filter=loss&q={{ q }}" class="filter-chip {% if status_filter == 'loss' %}active{% endif %}">Збиткові</a>
+</div>
+
+<section class="section-block phones-desktop-view">
+    <div class="section-head">
+        <h3>Таблиця телефонів</h3>
+    </div>
+
+    <div class="table-card">
+        <div class="table-scroll">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Модель</th>
+                        <th>Пам’ять</th>
+                        <th>Купив</th>
+                        <th>Логістика</th>
+                        <th>Робота</th>
+                        <th>Фінал</th>
+                        <th>Собівартість</th>
+                        <th>Продаж</th>
+                        <th>Прибуток</th>
+                        <th>Shipment</th>
+                        <th>Дії</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for phone in phones %}
+                    <tr>
+                        <td class="mono">#{{ phone.display_id }}</td>
+                        <td class="strong-cell">
+                            <a class="inline-link" href="/web/phones/{{ phone.id }}">
+                                {{ phone.model }}
+                            </a>
+                        </td>
+                        <td>{{ phone.storage }}</td>
+                        <td>€{{ "%.2f"|format(phone.buy_price) }}</td>
+                        <td><span class="status-badge logistics">{{ phone.logistics_status }}</span></td>
+                        <td><span class="status-badge work">{{ phone.work_status }}</span></td>
+                        <td>
+                            <span class="status-badge final {% if phone.final_status == 'sold' %}sold{% endif %}">
+                                {{ phone.final_status }}
+                            </span>
+                        </td>
+                        <td>€{{ "%.2f"|format(phone.total_cost) }}</td>
+                        <td>
+                            {% if phone.sell_price is not none %}
+                                €{{ "%.2f"|format(phone.sell_price) }}
+                            {% else %}
+                                <span class="muted">—</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if phone.profit is not none %}
+                                <span class="{% if phone.profit >= 0 %}profit-positive{% else %}profit-negative{% endif %}">
+                                    €{{ "%.2f"|format(phone.profit) }}
+                                </span>
+                            {% else %}
+                                <span class="muted">—</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if phone.shipment_id %}
+                                #{{ phone.shipment_id }}
+                            {% else %}
+                                <span class="muted">—</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <div class="row-actions">
+                                <a href="/web/phones/{{ phone.id }}" class="btn btn-secondary btn-small">Відкрити</a>
+                                <a href="/web/phones/{{ phone.id }}/edit" class="btn btn-secondary btn-small">Редагувати</a>
+                                <form method="post" action="/web/phones/{{ phone.id }}/delete" class="inline-form">
+                                    <button type="submit" class="btn btn-secondary btn-small">Видалити</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="12" class="empty-state">Телефонів ще немає.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+
+<section class="section-block phones-mobile-view">
+    <div class="section-head">
+        <h3>Телефони</h3>
+    </div>
+
+    <div class="cards-stack">
+        {% for phone in phones %}
+        <div class="entity-card">
+            <div class="entity-card-top">
+                <div>
+                    <div class="entity-title">#{{ phone.display_id }} · {{ phone.model }}</div>
+                    <div class="entity-subtitle">{{ phone.storage }}</div>
+                </div>
+                <div class="{% if phone.profit is not none and phone.profit >= 0 %}profit-positive{% elif phone.profit is not none and phone.profit < 0 %}profit-negative{% else %}muted{% endif %}">
+                    {% if phone.profit is not none %}
+                        €{{ "%.2f"|format(phone.profit) }}
+                    {% else %}
+                        —
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="entity-meta-grid">
+                <div><span>Купив</span><strong>€{{ "%.2f"|format(phone.buy_price) }}</strong></div>
+                <div><span>Собівартість</span><strong>€{{ "%.2f"|format(phone.total_cost) }}</strong></div>
+                <div><span>Продаж</span><strong>{% if phone.sell_price is not none %}€{{ "%.2f"|format(phone.sell_price) }}{% else %}—{% endif %}</strong></div>
+                <div><span>Shipment</span><strong>{% if phone.shipment_id %}#{{ phone.shipment_id }}{% else %}—{% endif %}</strong></div>
+            </div>
+
+            <div class="entity-badges">
+                <span class="status-badge logistics">{{ phone.logistics_status }}</span>
+                <span class="status-badge work">{{ phone.work_status }}</span>
+                <span class="status-badge final {% if phone.final_status == 'sold' %}sold{% endif %}">{{ phone.final_status }}</span>
+            </div>
+
+            <div class="entity-actions">
+                <a href="/web/phones/{{ phone.id }}" class="btn btn-primary">Відкрити</a>
+                <a href="/web/phones/{{ phone.id }}/edit" class="btn btn-secondary">Редагувати</a>
+                <form method="post" action="/web/phones/{{ phone.id }}/delete" class="inline-form">
+                    <button type="submit" class="btn btn-secondary">Видалити</button>
+                </form>
+            </div>
+        </div>
+        {% else %}
+        <div class="table-card">
+            <div class="empty-state">Телефонів ще немає.</div>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+{% endblock %}

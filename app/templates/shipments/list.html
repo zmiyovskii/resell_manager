@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+
+{% block title %}Shipments{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <p class="page-kicker">Логістика</p>
+        <h2 class="page-title">Shipments</h2>
+        <p class="page-subtitle">
+            Партії, перевізники, статуси і контроль руху телефонів без перевантаження.
+        </p>
+    </div>
+</div>
+
+<div class="quick-actions">
+    <a href="/web/shipments/create" class="btn btn-primary">Додати shipment</a>
+</div>
+
+<section class="section-block desktop-only">
+    <div class="section-head">
+        <h3>Список shipment-ів</h3>
+    </div>
+
+    <div class="table-card">
+        <div class="table-scroll">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Код</th>
+                        <th>Перевізник</th>
+                        <th>Створено</th>
+                        <th>Відправлено</th>
+                        <th>Прибуття</th>
+                        <th>Трек</th>
+                        <th>Статус</th>
+                        <th>Fee</th>
+                        <th>Нотатка</th>
+                        <th>Дії</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for shipment in shipments %}
+                    <tr>
+                        <td class="strong-cell">{{ shipment.code }}</td>
+                        <td>{{ shipment.carrier_name or "—" }}</td>
+                        <td>{{ shipment.created_date }}</td>
+                        <td>{{ shipment.sent_date or "—" }}</td>
+                        <td>{{ shipment.arrival_date or "—" }}</td>
+                        <td>{{ shipment.tracking_number or "—" }}</td>
+                        <td><span class="status-badge logistics">{{ shipment.status }}</span></td>
+                        <td>€{{ "%.2f"|format(shipment.default_carrier_fee) }}</td>
+                        <td>{{ shipment.note or "—" }}</td>
+                        <td>
+                            <div class="row-actions">
+                                <a href="/web/shipments/{{ shipment.id }}/edit" class="btn btn-secondary btn-small">Редагувати</a>
+                                <form method="post" action="/web/shipments/{{ shipment.id }}/delete" class="inline-form">
+                                    <button type="submit" class="btn btn-secondary btn-small">Видалити</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="10" class="empty-state">Shipment-ів ще немає.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+
+<section class="section-block mobile-only">
+    <div class="section-head">
+        <h3>Партії</h3>
+    </div>
+
+    <div class="cards-stack">
+        {% for shipment in shipments %}
+        <div class="entity-card">
+            <div class="entity-card-top">
+                <div>
+                    <div class="entity-title">{{ shipment.code }}</div>
+                    <div class="entity-subtitle">{{ shipment.carrier_name or "Без перевізника" }}</div>
+                </div>
+                <span class="status-badge logistics">{{ shipment.status }}</span>
+            </div>
+
+            <div class="entity-meta-grid">
+                <div><span>Створено</span><strong>{{ shipment.created_date }}</strong></div>
+                <div><span>Відправлено</span><strong>{{ shipment.sent_date or "—" }}</strong></div>
+                <div><span>Прибуття</span><strong>{{ shipment.arrival_date or "—" }}</strong></div>
+                <div><span>Fee</span><strong>€{{ "%.2f"|format(shipment.default_carrier_fee) }}</strong></div>
+                <div><span>Трек</span><strong>{{ shipment.tracking_number or "—" }}</strong></div>
+                <div><span>Нотатка</span><strong>{{ shipment.note or "—" }}</strong></div>
+            </div>
+
+            <div class="entity-actions">
+                <a href="/web/shipments/{{ shipment.id }}/edit" class="btn btn-primary">Редагувати</a>
+                <form method="post" action="/web/shipments/{{ shipment.id }}/delete" class="inline-form">
+                    <button type="submit" class="btn btn-secondary">Видалити</button>
+                </form>
+            </div>
+        </div>
+        {% else %}
+        <div class="table-card">
+            <div class="empty-state">Shipment-ів ще немає.</div>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+{% endblock %}

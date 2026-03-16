@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+
+{% block title %}Склад{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <p class="page-kicker">Склад</p>
+        <h2 class="page-title">Складські позиції</h2>
+        <p class="page-subtitle">Деталі, батареї, дисплеї, клей та інші позиції.</p>
+    </div>
+</div>
+
+<div class="quick-actions">
+    <a href="/web/inventory/create" class="btn btn-primary">Додати позицію</a>
+</div>
+
+<section class="section-block">
+    <div class="section-head">
+        <h3>Склад</h3>
+    </div>
+
+    <div class="table-card">
+        <div class="table-scroll">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Назва</th>
+                        <th>Кількість</th>
+                        <th>Сер. ціна</th>
+                        <th>Сума</th>
+                        <th>Дії</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in inventory_items %}
+                    <tr>
+                        <td class="mono">#{{ item.id }}</td>
+                        <td class="strong-cell">{{ item.name }}</td>
+                        <td>
+                            {% if item.quantity == 0 %}
+                                <span class="warning-badge danger">0</span>
+                            {% elif item.quantity <= 2 %}
+                                <span class="warning-badge warn">{{ item.quantity }}</span>
+                            {% else %}
+                                {{ item.quantity }}
+                            {% endif %}
+                        </td>
+                        <td>€{{ "%.2f"|format(item.avg_price) }}</td>
+                        <td>€{{ "%.2f"|format(item.total_value) }}</td>
+                        <td>
+                            <div class="row-actions">
+                                <a href="/web/inventory/{{ item.id }}/edit" class="btn btn-secondary btn-small">Редагувати</a>
+                                <a href="/web/inventory/{{ item.id }}/purchase" class="btn btn-secondary btn-small">Докупити</a>
+                                <a href="/web/inventory/{{ item.id }}/use" class="btn btn-secondary btn-small">Використати</a>
+                                <a href="/web/inventory/{{ item.id }}/writeoff" class="btn btn-secondary btn-small">Списати</a>
+
+                                <form method="post" action="/web/inventory/{{ item.id }}/delete" class="inline-form">
+                                    <button type="submit" class="btn btn-secondary btn-small">Видалити</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="6" class="empty-state">Позицій на складі ще немає.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+{% endblock %}

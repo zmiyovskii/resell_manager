@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block title %}Витрати{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <p class="page-kicker">Фінанси</p>
+        <h2 class="page-title">Витрати</h2>
+        <p class="page-subtitle">Усі витрати по телефонах, shipment-ах і бізнесу.</p>
+    </div>
+</div>
+
+<div class="quick-actions">
+    <a href="/web/expenses/create" class="btn btn-primary">Додати витрату</a>
+</div>
+
+<section class="section-block">
+    <div class="section-head">
+        <h3>Список витрат</h3>
+    </div>
+
+    <div class="table-card">
+        <div class="table-scroll">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Тип</th>
+                        <th>Категорія</th>
+                        <th>Сума</th>
+                        <th>Дата</th>
+                        <th>Телефон</th>
+                        <th>Shipment</th>
+                        <th>Дії</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for expense in expenses %}
+                    <tr>
+                        <td class="mono">#{{ expense.id }}</td>
+                        <td>{{ expense.type }}</td>
+                        <td>{{ expense.category }}</td>
+                        <td>€{{ "%.2f"|format(expense.amount) }}</td>
+                        <td>{{ expense.date }}</td>
+                        <td>{{ expense.phone_id or "—" }}</td>
+                        <td>{{ expense.shipment_id or "—" }}</td>
+                        <td>
+                            <div class="row-actions">
+                                <form method="post" action="/web/expenses/{{ expense.id }}/delete" class="inline-form">
+                                    <button type="submit" class="btn btn-secondary btn-small">Видалити</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="8" class="empty-state">Витрат ще немає.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block title %}Додати позицію{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <p class="page-kicker">Створення</p>
+        <h2 class="page-title">Додати позицію на склад</h2>
+        <p class="page-subtitle">Створи нову складську позицію для деталей і матеріалів.</p>
+    </div>
+</div>
+
+{% include "partials/flash.html" %}
+
+<section class="section-block">
+    <div class="form-card">
+        <form method="post" action="/web/inventory/create" class="form-grid">
+            <div class="form-group full-width">
+                <label>Назва</label>
+                <input type="text" name="name" placeholder="Display iPhone 13" required>
+            </div>
+
+            <div class="form-group">
+                <label>Кількість</label>
+                <input type="number" name="quantity" min="0" required>
+            </div>
+
+            <div class="form-group">
+                <label>Середня ціна</label>
+                <input type="number" step="0.01" name="avg_price" min="0" required>
+            </div>
+
+            <div class="form-actions full-width">
+                <button type="submit" class="btn btn-primary">Створити</button>
+                <a href="/web/inventory" class="btn btn-secondary">Назад</a>
+            </div>
+        </form>
+    </div>
+</section>
+{% endblock %}

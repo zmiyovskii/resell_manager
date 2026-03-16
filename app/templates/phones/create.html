@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block title %}Додати телефон{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <p class="page-kicker">Створення</p>
+        <h2 class="page-title">Додати телефон</h2>
+        <p class="page-subtitle">Створення нового телефона через web panel.</p>
+    </div>
+</div>
+
+{% include "partials/flash.html" %}
+
+<section class="section-block">
+    <div class="form-card">
+        <form method="post" action="/web/phones/create" class="form-grid">
+            <div class="form-group">
+                <label>Модель</label>
+                <input type="text" name="model" placeholder="iPhone 13" required>
+            </div>
+
+            <div class="form-group">
+                <label>Пам’ять</label>
+                <input type="text" name="storage" placeholder="128GB" required>
+            </div>
+
+            <div class="form-group">
+                <label>Ціна покупки</label>
+                <input type="number" step="0.01" name="buy_price" placeholder="130" required>
+            </div>
+
+            <div class="form-group">
+                <label>Дата покупки</label>
+                <input type="date" name="buy_date" required>
+            </div>
+
+            <div class="form-group full-width">
+                <label>Посилання на оголошення</label>
+                <input type="url" name="listing_url" placeholder="https://..." required>
+            </div>
+
+            <div class="form-group full-width">
+                <label>Дефект</label>
+                <input type="text" name="defect" placeholder="Backglass cracked">
+            </div>
+
+            <div class="form-group full-width">
+                <label>Нотатки</label>
+                <textarea name="notes" rows="4" placeholder="Що важливо знати про цей телефон..."></textarea>
+            </div>
+
+            <div class="form-actions full-width">
+                <button type="submit" class="btn btn-primary">Створити телефон</button>
+                <a href="/web/phones" class="btn btn-secondary">Назад до списку</a>
+            </div>
+        </form>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Resell Manager{% endblock %}</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <div class="mobile-topbar">
+        <div class="mobile-brand">
+            <div class="brand-badge">RM</div>
+            <div>
+                <div class="mobile-brand-title">Resell Manager</div>
+                <div class="mobile-brand-subtitle">Панель керування</div>
+            </div>
+        </div>
+        <a href="/logout" class="btn btn-secondary btn-small">Logout</a>
+    </div>
+
+    <div class="app-shell">
+        <aside class="sidebar">
+            <div class="sidebar-top">
+                <div class="brand-badge">RM</div>
+                <div>
+                    <h1 class="brand-title">Resell Manager</h1>
+                    <p class="brand-subtitle">Реселл телефонів і партій</p>
+                </div>
+            </div>
+
+            <nav class="nav">
+                <a href="/web/dashboard" class="nav-link">Dashboard</a>
+                <a href="/web/phones" class="nav-link">Телефони</a>
+                <a href="/web/shipments" class="nav-link">Shipments</a>
+                <a href="/web/expenses" class="nav-link">Витрати</a>
+                <a href="/web/inventory" class="nav-link">Склад</a>
+                <a href="/logout" class="nav-link nav-link-danger">Logout</a>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            {% block content %}{% endblock %}
+        </main>
+    </div>
+</body>
+</html>

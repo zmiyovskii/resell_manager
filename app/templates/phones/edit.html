@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+
+{% block title %}Редагувати телефон{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <p class="page-kicker">Редагування</p>
+        <h2 class="page-title">Редагувати #{{ phone.display_id }}</h2>
+        <p class="page-subtitle">Оновлення даних і статусів телефона.</p>
+    </div>
+</div>
+
+<section class="section-block">
+    <div class="form-card">
+        <form method="post" action="/web/phones/{{ phone.id }}/edit" class="form-grid">
+            <div class="form-group">
+                <label>Модель</label>
+                <input type="text" name="model" value="{{ phone.model }}" required>
+            </div>
+
+            <div class="form-group">
+                <label>Пам’ять</label>
+                <input type="text" name="storage" value="{{ phone.storage }}" required>
+            </div>
+
+            <div class="form-group">
+                <label>Ціна покупки</label>
+                <input type="number" step="0.01" name="buy_price" value="{{ phone.buy_price }}" required>
+            </div>
+
+            <div class="form-group">
+                <label>Дата покупки</label>
+                <input type="date" name="buy_date" value="{{ phone.buy_date }}" required>
+            </div>
+
+            <div class="form-group full-width">
+                <label>Посилання</label>
+                <input type="url" name="listing_url" value="{{ phone.listing_url }}" required>
+            </div>
+
+            <div class="form-group full-width">
+                <label>Дефект</label>
+                <input type="text" name="defect" value="{{ phone.defect or '' }}">
+            </div>
+
+            <div class="form-group full-width">
+                <label>Нотатки</label>
+                <textarea name="notes" rows="4">{{ phone.notes or '' }}</textarea>
+            </div>
+
+            <div class="form-group">
+                <label>Логістичний статус</label>
+                <select name="logistics_status">
+                    <option value="waiting_shipment" {% if phone.logistics_status == 'waiting_shipment' %}selected{% endif %}>waiting_shipment</option>
+                    <option value="in_shipment" {% if phone.logistics_status == 'in_shipment' %}selected{% endif %}>in_shipment</option>
+                    <option value="in_transit" {% if phone.logistics_status == 'in_transit' %}selected{% endif %}>in_transit</option>
+                    <option value="arrived" {% if phone.logistics_status == 'arrived' %}selected{% endif %}>arrived</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Робочий статус</label>
+                <select name="work_status">
+                    <option value="bought" {% if phone.work_status == 'bought' %}selected{% endif %}>bought</option>
+                    <option value="repair" {% if phone.work_status == 'repair' %}selected{% endif %}>repair</option>
+                    <option value="ready" {% if phone.work_status == 'ready' %}selected{% endif %}>ready</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Фінальний статус</label>
+                <select name="final_status">
+                    <option value="active" {% if phone.final_status == 'active' %}selected{% endif %}>active</option>
+                    <option value="sold" {% if phone.final_status == 'sold' %}selected{% endif %}>sold</option>
+                    <option value="returned" {% if phone.final_status == 'returned' %}selected{% endif %}>returned</option>
+                    <option value="refunded" {% if phone.final_status == 'refunded' %}selected{% endif %}>refunded</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>ID shipment</label>
+                <input type="number" name="shipment_id" value="{{ phone.shipment_id or '' }}">
+            </div>
+
+            <div class="form-actions full-width">
+                <button type="submit" class="btn btn-primary">Зберегти зміни</button>
+                <a href="/web/phones/{{ phone.id }}" class="btn btn-secondary">Назад</a>
+            </div>
+        </form>
+    </div>
+</section>
+{% endblock %}

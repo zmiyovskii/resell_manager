@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block title %}Редагувати склад{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <p class="page-kicker">Редагування</p>
+        <h2 class="page-title">Редагувати складську позицію</h2>
+        <p class="page-subtitle">{{ item.name }}</p>
+    </div>
+</div>
+
+<div class="quick-actions">
+    <a href="/web/inventory" class="btn btn-secondary">Назад</a>
+    <a href="/web/inventory/{{ item.id }}/purchase" class="btn btn-secondary">Докупити</a>
+    <a href="/web/inventory/{{ item.id }}/use" class="btn btn-secondary">Використати</a>
+    <a href="/web/inventory/{{ item.id }}/writeoff" class="btn btn-secondary">Списати</a>
+</div>
+
+<section class="section-block">
+    <div class="form-card">
+        <form method="post" action="/web/inventory/{{ item.id }}/edit" class="form-grid">
+            <div class="form-group full-width">
+                <label>Назва</label>
+                <input type="text" name="name" value="{{ item.name }}" required>
+            </div>
+
+            <div class="form-group">
+                <label>Кількість</label>
+                <input type="number" name="quantity" min="0" value="{{ item.quantity }}" required>
+            </div>
+
+            <div class="form-group">
+                <label>Середня ціна</label>
+                <input type="number" step="0.01" name="avg_price" min="0" value="{{ item.avg_price }}" required>
+            </div>
+
+            <div class="form-actions full-width">
+                <button type="submit" class="btn btn-primary">Зберегти</button>
+            </div>
+        </form>
+    </div>
+</section>
+{% endblock %}

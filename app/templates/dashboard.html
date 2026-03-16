@@ -1,0 +1,279 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <p class="page-kicker">Огляд</p>
+        <h2 class="page-title">Dashboard</h2>
+        <p class="page-subtitle">
+            Головні цифри по реселлу, витратах, продажах і shipment-ах.
+            На мобільному тут тільки найважливіше, без зайвого шуму.
+        </p>
+    </div>
+</div>
+
+<div class="filters-bar">
+    <a href="/web/dashboard?period=all" class="filter-chip {% if period == 'all' %}active{% endif %}">All time</a>
+    <a href="/web/dashboard?period=today" class="filter-chip {% if period == 'today' %}active{% endif %}">Today</a>
+    <a href="/web/dashboard?period=7d" class="filter-chip {% if period == '7d' %}active{% endif %}">7 days</a>
+    <a href="/web/dashboard?period=30d" class="filter-chip {% if period == '30d' %}active{% endif %}">30 days</a>
+    <a href="/web/dashboard?period=month" class="filter-chip {% if period == 'month' %}active{% endif %}">This month</a>
+</div>
+
+<section class="section-block">
+    <div class="section-head">
+        <h3>Ключові показники</h3>
+    </div>
+
+    <div class="stats-grid">
+        <div class="stat-card">
+            <span class="stat-label">Активні телефони</span>
+            <strong class="stat-value">{{ summary.phones.active }}</strong>
+        </div>
+
+        <div class="stat-card">
+            <span class="stat-label">У відправці</span>
+            <strong class="stat-value">{{ summary.phones.in_shipment }}</strong>
+        </div>
+
+        <div class="stat-card">
+            <span class="stat-label">У ремонті</span>
+            <strong class="stat-value">{{ summary.phones.repair }}</strong>
+        </div>
+
+        <div class="stat-card">
+            <span class="stat-label">Готові до продажу</span>
+            <strong class="stat-value">{{ summary.phones.ready }}</strong>
+        </div>
+
+        <div class="stat-card">
+            <span class="stat-label">Продано за період</span>
+            <strong class="stat-value">{{ summary.phones.sold_in_period }}</strong>
+        </div>
+
+        <div class="stat-card profit-card">
+            <span class="stat-label">Чистий прибуток за період</span>
+            <strong class="stat-value">€{{ "%.2f"|format(summary.finance.net_profit_period) }}</strong>
+        </div>
+    </div>
+</section>
+
+<section class="section-block">
+    <div class="section-head">
+        <h3>Фінанси</h3>
+    </div>
+
+    <div class="stats-grid">
+        <div class="stat-card money-card">
+            <span class="stat-label">Обіг за період</span>
+            <strong class="stat-value">€{{ "%.2f"|format(summary.finance.turnover_period) }}</strong>
+        </div>
+
+        <div class="stat-card money-card">
+            <span class="stat-label">Прибуток з продажів</span>
+            <strong class="stat-value">€{{ "%.2f"|format(summary.finance.sold_phones_profit_period) }}</strong>
+        </div>
+
+        <div class="stat-card money-card">
+            <span class="stat-label">Витрати на телефони</span>
+            <strong class="stat-value">€{{ "%.2f"|format(summary.finance.phone_expenses_period) }}</strong>
+        </div>
+
+        <div class="stat-card money-card">
+            <span class="stat-label">Бізнес витрати</span>
+            <strong class="stat-value">€{{ "%.2f"|format(summary.finance.business_expenses_period) }}</strong>
+        </div>
+
+        <div class="stat-card money-card">
+            <span class="stat-label">Закупки складу</span>
+            <strong class="stat-value">€{{ "%.2f"|format(summary.finance.inventory_purchases_period) }}</strong>
+        </div>
+
+        <div class="stat-card money-card">
+            <span class="stat-label">Усі витрати за період</span>
+            <strong class="stat-value">€{{ "%.2f"|format(summary.finance.total_expenses_period) }}</strong>
+        </div>
+    </div>
+</section>
+
+<section class="section-block">
+    <div class="section-head">
+        <h3>Стан бізнесу</h3>
+    </div>
+
+    <div class="stats-grid">
+        <div class="stat-card">
+            <span class="stat-label">Всього телефонів</span>
+            <strong class="stat-value">{{ summary.phones.total }}</strong>
+        </div>
+
+        <div class="stat-card">
+            <span class="stat-label">Продані всього</span>
+            <strong class="stat-value">{{ summary.phones.sold_total }}</strong>
+        </div>
+
+        <div class="stat-card">
+            <span class="stat-label">Повернення</span>
+            <strong class="stat-value">{{ summary.phones.returned }}</strong>
+        </div>
+
+        <div class="stat-card money-card">
+            <span class="stat-label">Вкладено в активні телефони</span>
+            <strong class="stat-value">€{{ "%.2f"|format(summary.finance.invested_active_phones) }}</strong>
+        </div>
+
+        <div class="stat-card money-card">
+            <span class="stat-label">Куплено телефонів за період</span>
+            <strong class="stat-value">€{{ "%.2f"|format(summary.finance.invested_bought_in_period) }}</strong>
+        </div>
+
+        <div class="stat-card money-card">
+            <span class="stat-label">Закупки складу за період</span>
+            <strong class="stat-value">€{{ "%.2f"|format(summary.finance.invested_in_inventory_period) }}</strong>
+        </div>
+    </div>
+</section>
+
+<section class="section-block">
+    <div class="section-head">
+        <h3>Shipments</h3>
+    </div>
+
+    <div class="stats-grid">
+        <div class="stat-card">
+            <span class="stat-label">Відкриті shipment-и</span>
+            <strong class="stat-value">{{ summary.shipments.open_shipments }}</strong>
+        </div>
+
+        <div class="stat-card">
+            <span class="stat-label">Прибули</span>
+            <strong class="stat-value">{{ summary.shipments.arrived_shipments }}</strong>
+        </div>
+
+        <div class="stat-card">
+            <span class="stat-label">Телефони в дорозі</span>
+            <strong class="stat-value">{{ summary.shipments.phones_in_transit }}</strong>
+        </div>
+
+        <div class="stat-card money-card">
+            <span class="stat-label">Найкраща партія</span>
+            <strong class="stat-value">€{{ "%.2f"|format(summary.shipments.best_shipment_profit) }}</strong>
+        </div>
+
+        <div class="stat-card money-card">
+            <span class="stat-label">Найслабша партія</span>
+            <strong class="stat-value">€{{ "%.2f"|format(summary.shipments.worst_shipment_profit) }}</strong>
+        </div>
+    </div>
+</section>
+
+<div class="dashboard-grid">
+    <section class="section-block">
+        <div class="section-head">
+            <h3>Останні телефони</h3>
+        </div>
+
+        <div class="table-card compact-card">
+            <div class="table-scroll">
+                <table class="data-table compact-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Модель</th>
+                            <th>Фінал</th>
+                            <th>Прибуток</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for phone in recent_phones %}
+                        <tr>
+                            <td class="mono">#{{ phone.display_id }}</td>
+                            <td>
+                                <a class="inline-link" href="/web/phones/{{ phone.id }}">{{ phone.model }}</a>
+                                <div class="mobile-subline">{{ phone.storage }}</div>
+                            </td>
+                            <td>{{ phone.final_status }}</td>
+                            <td>
+                                {% if phone.profit is not none %}
+                                    <span class="{% if phone.profit >= 0 %}profit-positive{% else %}profit-negative{% endif %}">
+                                        €{{ "%.2f"|format(phone.profit) }}
+                                    </span>
+                                {% else %}
+                                    <span class="muted">—</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="4" class="empty-state">Телефонів ще немає.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <section class="section-block">
+        <div class="section-head">
+            <h3>Найприбутковіші</h3>
+        </div>
+
+        <div class="mini-list-card">
+            {% for phone in profitable_phones %}
+            <a href="/web/phones/{{ phone.id }}" class="mini-list-row">
+                <div>
+                    <strong>#{{ phone.display_id }} · {{ phone.model }}</strong>
+                    <span>{{ phone.storage }}</span>
+                </div>
+                <div class="profit-positive">€{{ "%.2f"|format(phone.profit) }}</div>
+            </a>
+            {% else %}
+            <div class="empty-state padded-empty">Ще немає прибуткових телефонів.</div>
+            {% endfor %}
+        </div>
+    </section>
+
+    <section class="section-block">
+        <div class="section-head">
+            <h3>Збиткові</h3>
+        </div>
+
+        <div class="mini-list-card">
+            {% for phone in loss_phones %}
+            <a href="/web/phones/{{ phone.id }}" class="mini-list-row">
+                <div>
+                    <strong>#{{ phone.display_id }} · {{ phone.model }}</strong>
+                    <span>{{ phone.storage }}</span>
+                </div>
+                <div class="profit-negative">€{{ "%.2f"|format(phone.profit) }}</div>
+            </a>
+            {% else %}
+            <div class="empty-state padded-empty">Збиткових телефонів зараз немає.</div>
+            {% endfor %}
+        </div>
+    </section>
+
+    <section class="section-block">
+        <div class="section-head">
+            <h3>Останні продажі</h3>
+        </div>
+
+        <div class="mini-list-card">
+            {% for phone in recent_sales %}
+            <a href="/web/phones/{{ phone.id }}" class="mini-list-row">
+                <div>
+                    <strong>#{{ phone.display_id }} · {{ phone.model }}</strong>
+                    <span>{{ phone.sell_date or "—" }}</span>
+                </div>
+                <div>€{{ "%.2f"|format(phone.sell_price) }}</div>
+            </a>
+            {% else %}
+            <div class="empty-state padded-empty">Продажів поки немає.</div>
+            {% endfor %}
+        </div>
+    </section>
+</div>
+{% endblock %}

@@ -1,0 +1,21 @@
+<div class="toast-stack">
+    {% if success_message %}
+    <div class="toast toast-success">
+        {{ success_message }}
+    </div>
+    {% endif %}
+
+    {% if error_message %}
+    <div class="toast toast-error">
+        {{ error_message }}
+    </div>
+    {% endif %}
+
+    {% if warnings %}
+        {% for warning in warnings %}
+        <div class="toast toast-warning">
+            {{ warning }}
+        </div>
+        {% endfor %}
+    {% endif %}
+</div>

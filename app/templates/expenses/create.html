@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+
+{% block title %}Додати витрату{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <p class="page-kicker">Витрати</p>
+        <h2 class="page-title">Додати витрату</h2>
+        <p class="page-subtitle">Створення нової витрати вручну.</p>
+    </div>
+</div>
+
+{% include "partials/flash.html" %}
+
+<section class="section-block">
+    <div class="form-card">
+        <form method="post" action="/web/expenses/create" class="form-grid">
+            <div class="form-group">
+                <label>Тип</label>
+                <select name="type" required>
+                    <option value="phone">phone</option>
+                    <option value="shipment">shipment</option>
+                    <option value="business">business</option>
+                    <option value="inventory_purchase">inventory_purchase</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Категорія</label>
+                <select name="category" required>
+                    <option value="carrier_fee">carrier_fee</option>
+                    <option value="display">display</option>
+                    <option value="battery">battery</option>
+                    <option value="backglass">backglass</option>
+                    <option value="shipping">shipping</option>
+                    <option value="glue">glue</option>
+                    <option value="tools">tools</option>
+                    <option value="other">other</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Сума</label>
+                <input type="number" step="0.01" name="amount" required>
+            </div>
+
+            <div class="form-group">
+                <label>Дата</label>
+                <input type="date" name="date" required>
+            </div>
+
+            <div class="form-group">
+                <label>ID телефона</label>
+                <input type="number" name="phone_id">
+            </div>
+
+            <div class="form-group">
+                <label>ID shipment</label>
+                <input type="number" name="shipment_id">
+            </div>
+
+            <div class="form-actions full-width">
+                <button type="submit" class="btn btn-primary">Додати витрату</button>
+                <a href="/web/expenses" class="btn btn-secondary">Назад</a>
+            </div>
+        </form>
+    </div>
+</section>
+{% endblock %}

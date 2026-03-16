@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block title %}Використати зі складу{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <p class="page-kicker">Склад</p>
+        <h2 class="page-title">Використати позицію</h2>
+        <p class="page-subtitle">{{ item.name }} · зараз на складі: {{ item.quantity }}</p>
+    </div>
+</div>
+
+{% include "partials/flash.html" %}
+
+<section class="section-block">
+    <div class="form-card">
+        <form method="post" action="/web/inventory/{{ item.id }}/use" class="form-grid">
+            <div class="form-group">
+                <label>Кількість</label>
+                <input type="number" name="quantity" min="1" required>
+            </div>
+
+            <div class="form-group">
+                <label>ID телефона</label>
+                <input type="number" name="phone_id" min="1" required>
+            </div>
+
+            <div class="form-group full-width">
+                <label>Нотатка</label>
+                <textarea name="note" rows="3"></textarea>
+            </div>
+
+            <div class="form-actions full-width">
+                <button type="submit" class="btn btn-primary">Використати</button>
+                <a href="/web/inventory/{{ item.id }}/edit" class="btn btn-secondary">Назад</a>
+            </div>
+        </form>
+    </div>
+</section>
+{% endblock %}
