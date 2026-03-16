@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from fastapi.responses import RedirectResponse
 from sqlalchemy import text
 from starlette.staticfiles import StaticFiles
 
@@ -34,15 +35,11 @@ app.include_router(views_router)
 
 @app.get("/")
 def root():
-    return {
-        "message": f"{settings.app_name} is running",
-        "debug": settings.debug,
-    }
+    return RedirectResponse(url="/web/dashboard")
 
 
 @app.get("/health/db")
 def health_db():
     with engine.connect() as connection:
         connection.execute(text("SELECT 1"))
-
-    return {"status": "ok", "database": "connected"}
+    return {"status": "ok"}
