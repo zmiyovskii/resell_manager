@@ -1,6 +1,5 @@
 from sqlalchemy.orm import Session
 
-from app.repositories.inventory import inventory_repository
 from app.core.enums import FinalStatus
 from app.repositories.expenses import expense_repository
 from app.repositories.phones import phone_repository
@@ -71,15 +70,45 @@ class PhoneService:
 
         return self._attach_calculated_fields(db, phone)
 
+    def set_logistics_status(self, db: Session, phone_id: int, logistics_status: str):
+        phone = phone_repository.get_by_id(db, phone_id)
+        if phone is None:
+            return None
+
+        phone.logistics_status = logistics_status
+        db.add(phone)
+        db.commit()
+        db.refresh(phone)
+        return self._attach_calculated_fields(db, phone)
+
+    def set_work_status(self, db: Session, phone_id: int, work_status: str):
+        phone = phone_repository.get_by_id(db, phone_id)
+        if phone is None:
+            return None
+
+        phone.work_status = work_status
+        db.add(phone)
+        db.commit()
+        db.refresh(phone)
+        return self._attach_calculated_fields(db, phone)
+
+    def set_final_status(self, db: Session, phone_id: int, final_status: str):
+        phone = phone_repository.get_by_id(db, phone_id)
+        if phone is None:
+            return None
+
+        phone.final_status = final_status
+        db.add(phone)
+        db.commit()
+        db.refresh(phone)
+        return self._attach_calculated_fields(db, phone)
+
     def delete_phone(self, db: Session, phone_id: int):
         phone = phone_repository.get_by_id(db, phone_id)
         if phone is None:
             return None
 
-        expense_repository.delete_by_phone_id(db, phone.id)
-        inventory_repository.delete_movements_by_phone_id(db, phone.id)
-
-        return phone_repository.delete(db, phone)
+        return phone_repository.soft_delete(db, phone)
 
 
 phone_service = PhoneService()

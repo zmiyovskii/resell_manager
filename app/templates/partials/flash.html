@@ -1,20 +1,23 @@
 <div class="toast-stack">
     {% if success_message %}
-    <div class="toast toast-success">
-        {{ success_message }}
+    <div class="toast toast-success" data-toast>
+        <button type="button" class="toast-close" data-toast-close>&times;</button>
+        <div class="toast-body">{{ success_message }}</div>
     </div>
     {% endif %}
 
     {% if error_message %}
-    <div class="toast toast-error">
-        {{ error_message }}
+    <div class="toast toast-error" data-toast>
+        <button type="button" class="toast-close" data-toast-close>&times;</button>
+        <div class="toast-body">{{ error_message }}</div>
     </div>
     {% endif %}
 
     {% if warnings %}
         {% for warning in warnings %}
-        <div class="toast toast-warning">
-            {{ warning }}
+        <div class="toast toast-warning" data-toast>
+            <button type="button" class="toast-close" data-toast-close>&times;</button>
+            <div class="toast-body">{{ warning }}</div>
         </div>
         {% endfor %}
     {% endif %}

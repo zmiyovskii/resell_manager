@@ -7,9 +7,7 @@
     <div>
         <p class="page-kicker">Деталі телефона</p>
         <h2 class="page-title">#{{ phone.display_id }} · {{ phone.model }} {{ phone.storage }}</h2>
-        <p class="page-subtitle">
-            Повна інформація по телефону, витрати, shipment, продаж і поточний стан.
-        </p>
+        <p class="page-subtitle">Повна інформація, витрати, логістика та продаж.</p>
     </div>
 </div>
 
@@ -48,7 +46,7 @@
             <div><span>Логістика</span><strong><span class="status-badge logistics">{{ phone.logistics_status }}</span></strong></div>
             <div><span>Робота</span><strong><span class="status-badge work">{{ phone.work_status }}</span></strong></div>
             <div><span>Фінал</span><strong><span class="status-badge final {% if phone.final_status == 'sold' %}sold{% endif %}">{{ phone.final_status }}</span></strong></div>
-            <div><span>Shipment</span><strong>{% if phone.shipment_id %}#{{ phone.shipment_id }}{% else %}—{% endif %}</strong></div>
+            <div><span>ID відправки</span><strong>{{ phone.shipment_id or "—" }}</strong></div>
         </div>
     </section>
 
@@ -58,8 +56,7 @@
             <div><span>Витрати на телефон</span><strong>€{{ "%.2f"|format(phone.phone_expenses_total) }}</strong></div>
             <div><span>Собівартість</span><strong>€{{ "%.2f"|format(phone.total_cost) }}</strong></div>
             <div><span>Ціна продажу</span><strong>{% if phone.sell_price is not none %}€{{ "%.2f"|format(phone.sell_price) }}{% else %}—{% endif %}</strong></div>
-            <div>
-                <span>Прибуток</span>
+            <div><span>Прибуток</span>
                 <strong>
                     {% if phone.profit is not none %}
                         <span class="{% if phone.profit >= 0 %}profit-positive{% else %}profit-negative{% endif %}">
@@ -76,6 +73,83 @@
 </div>
 
 <div class="action-panels">
+    <section class="detail-card">
+        <h3>Швидка зміна статусів</h3>
+        <p class="status-panel-note">
+            Тут можна швидко міняти логістику, етап роботи та фінальний статус без заходу в редагування.
+        </p>
+
+        <div class="section-head">
+            <h3>Логістика</h3>
+        </div>
+        <div class="quick-status-grid">
+            <form method="post" action="/web/phones/{{ phone.id }}/quick-logistics-status" class="quick-status-form">
+                <input type="hidden" name="logistics_status" value="waiting_shipment">
+                <button type="submit" class="btn btn-secondary btn-status-gray">waiting_shipment</button>
+            </form>
+
+            <form method="post" action="/web/phones/{{ phone.id }}/quick-logistics-status" class="quick-status-form">
+                <input type="hidden" name="logistics_status" value="in_shipment">
+                <button type="submit" class="btn btn-secondary btn-status-blue">in_shipment</button>
+            </form>
+
+            <form method="post" action="/web/phones/{{ phone.id }}/quick-logistics-status" class="quick-status-form">
+                <input type="hidden" name="logistics_status" value="in_transit">
+                <button type="submit" class="btn btn-secondary btn-status-blue">in_transit</button>
+            </form>
+
+            <form method="post" action="/web/phones/{{ phone.id }}/quick-logistics-status" class="quick-status-form">
+                <input type="hidden" name="logistics_status" value="arrived">
+                <button type="submit" class="btn btn-secondary btn-status-green">arrived</button>
+            </form>
+        </div>
+
+        <div class="section-head" style="margin-top: 18px;">
+            <h3>Робота</h3>
+        </div>
+        <div class="quick-status-grid">
+            <form method="post" action="/web/phones/{{ phone.id }}/quick-work-status" class="quick-status-form">
+                <input type="hidden" name="work_status" value="bought">
+                <button type="submit" class="btn btn-secondary btn-status-gray">bought</button>
+            </form>
+
+            <form method="post" action="/web/phones/{{ phone.id }}/quick-work-status" class="quick-status-form">
+                <input type="hidden" name="work_status" value="repair">
+                <button type="submit" class="btn btn-secondary btn-status-yellow">repair</button>
+            </form>
+
+            <form method="post" action="/web/phones/{{ phone.id }}/quick-work-status" class="quick-status-form">
+                <input type="hidden" name="work_status" value="ready">
+                <button type="submit" class="btn btn-secondary btn-status-green">ready</button>
+            </form>
+        </div>
+
+        <div class="section-head" style="margin-top: 18px;">
+            <h3>Фінал</h3>
+        </div>
+        <div class="quick-status-grid">
+            <form method="post" action="/web/phones/{{ phone.id }}/quick-final-status" class="quick-status-form">
+                <input type="hidden" name="final_status" value="active">
+                <button type="submit" class="btn btn-secondary btn-status-blue">active</button>
+            </form>
+
+            <form method="post" action="/web/phones/{{ phone.id }}/quick-final-status" class="quick-status-form">
+                <input type="hidden" name="final_status" value="sold">
+                <button type="submit" class="btn btn-secondary btn-status-green">sold</button>
+            </form>
+
+            <form method="post" action="/web/phones/{{ phone.id }}/quick-final-status" class="quick-status-form">
+                <input type="hidden" name="final_status" value="returned">
+                <button type="submit" class="btn btn-secondary btn-status-red">returned</button>
+            </form>
+
+            <form method="post" action="/web/phones/{{ phone.id }}/quick-final-status" class="quick-status-form">
+                <input type="hidden" name="final_status" value="refunded">
+                <button type="submit" class="btn btn-secondary btn-status-red">refunded</button>
+            </form>
+        </div>
+    </section>
+
     <section class="detail-card">
         <h3>Продати телефон</h3>
         <form method="post" action="/web/phones/{{ phone.id }}/sell" class="form-grid compact-form">
@@ -129,11 +203,11 @@
     </section>
 
     <section class="detail-card">
-        <h3>Додати у shipment</h3>
+        <h3>Додати у відправку</h3>
         <form method="post" action="/web/phones/{{ phone.id }}/assign-shipment" class="form-grid compact-form">
             <div class="form-group">
-                <label>Код shipment</label>
-                <input type="text" name="shipment_id" placeholder="SH-001" required>
+                <label>ID відправки</label>
+                <input type="number" name="shipment_id" required>
             </div>
 
             <div class="form-group">
@@ -158,7 +232,7 @@
         <h3>Витрати по телефону</h3>
     </div>
 
-    <div class="table-card desktop-only">
+    <div class="table-card">
         <div class="table-scroll">
             <table class="data-table">
                 <thead>
@@ -187,27 +261,6 @@
                 </tbody>
             </table>
         </div>
-    </div>
-
-    <div class="cards-stack mobile-only">
-        {% for expense in expenses %}
-        <div class="entity-card compact-entity-card">
-            <div class="entity-card-top">
-                <div>
-                    <div class="entity-title">#{{ expense.id }} · {{ expense.category }}</div>
-                    <div class="entity-subtitle">{{ expense.type }}</div>
-                </div>
-                <div>€{{ "%.2f"|format(expense.amount) }}</div>
-            </div>
-            <div class="entity-meta-grid">
-                <div><span>Дата</span><strong>{{ expense.date }}</strong></div>
-            </div>
-        </div>
-        {% else %}
-        <div class="table-card">
-            <div class="empty-state">Для цього телефона ще немає витрат.</div>
-        </div>
-        {% endfor %}
     </div>
 </section>
 {% endblock %}

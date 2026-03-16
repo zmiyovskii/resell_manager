@@ -305,6 +305,46 @@ def web_phone_return(
 
     return RedirectResponse(url=f"/web/phones/{phone_id}", status_code=303)
 
+@router.post("/web/phones/{phone_id}/quick-logistics-status", response_class=HTMLResponse)
+def web_phone_quick_logistics_status(
+    phone_id: int,
+    request: Request,
+    logistics_status: str = Form(...),
+    db: Session = Depends(get_db),
+):
+    phone = phone_service.set_logistics_status(db, phone_id, logistics_status)
+    if phone is None:
+        raise HTTPException(status_code=404, detail="Phone not found")
+
+    return RedirectResponse(url=f"/web/phones/{phone_id}", status_code=303)
+
+
+@router.post("/web/phones/{phone_id}/quick-work-status", response_class=HTMLResponse)
+def web_phone_quick_work_status(
+    phone_id: int,
+    request: Request,
+    work_status: str = Form(...),
+    db: Session = Depends(get_db),
+):
+    phone = phone_service.set_work_status(db, phone_id, work_status)
+    if phone is None:
+        raise HTTPException(status_code=404, detail="Phone not found")
+
+    return RedirectResponse(url=f"/web/phones/{phone_id}", status_code=303)
+
+
+@router.post("/web/phones/{phone_id}/quick-final-status", response_class=HTMLResponse)
+def web_phone_quick_final_status(
+    phone_id: int,
+    request: Request,
+    final_status: str = Form(...),
+    db: Session = Depends(get_db),
+):
+    phone = phone_service.set_final_status(db, phone_id, final_status)
+    if phone is None:
+        raise HTTPException(status_code=404, detail="Phone not found")
+
+    return RedirectResponse(url=f"/web/phones/{phone_id}", status_code=303)
 
 @router.post("/web/phones/{phone_id}/expense", response_class=HTMLResponse)
 def web_phone_add_expense(

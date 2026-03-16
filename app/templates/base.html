@@ -42,5 +42,23 @@
             {% block content %}{% endblock %}
         </main>
     </div>
+
+    <script>
+        document.addEventListener("click", function (event) {
+            const closeBtn = event.target.closest("[data-toast-close]");
+            if (!closeBtn) return;
+
+            const toast = closeBtn.closest("[data-toast]");
+            if (!toast) return;
+
+            toast.style.opacity = "0";
+            toast.style.transform = "translateY(-8px)";
+            toast.style.transition = "0.2s ease";
+
+            setTimeout(() => {
+                toast.remove();
+            }, 200);
+        });
+    </script>
 </body>
 </html>
