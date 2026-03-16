@@ -36,6 +36,21 @@ class ShipmentService:
 
         profit = revenue_total - buy_total - expenses_total
 
+        avg_profit_per_phone = 0
+        avg_buy_price = 0
+        avg_sale_price = 0
+
+        if phones_count > 0:
+            avg_buy_price = buy_total / phones_count
+
+        if sold_count > 0:
+            avg_profit_per_phone = profit / sold_count
+            avg_sale_price = revenue_total / sold_count
+
+        setattr(shipment, "avg_profit_per_phone", avg_profit_per_phone)
+        setattr(shipment, "avg_buy_price", avg_buy_price)
+        setattr(shipment, "avg_sale_price", avg_sale_price)
+
         setattr(shipment, "phones", phones)
         setattr(shipment, "phones_count", phones_count)
         setattr(shipment, "sold_count", sold_count)

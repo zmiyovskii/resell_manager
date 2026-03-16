@@ -6,8 +6,15 @@
 <div class="page-header">
     <div>
         <p class="page-kicker">Shipment</p>
-        <h2 class="page-title">{{ shipment.code }}</h2>
-        <p class="page-subtitle">Деталі партії, фінанси та телефони всередині.</p>
+
+        <h2 class="page-title">
+            {{ shipment.code }}
+            <span class="badge">{{ shipment.phones_count }} phones</span>
+        </h2>
+
+        <p class="page-subtitle">
+            Деталі партії, фінанси та телефони всередині.
+        </p>
     </div>
 </div>
 
@@ -18,50 +25,155 @@
     <a href="/web/shipments/{{ shipment.id }}/edit" class="btn btn-secondary">Редагувати</a>
 </div>
 
+
 <div class="detail-grid">
+
     <section class="detail-card">
         <h3>Основне</h3>
+
         <div class="detail-list">
-            <div><span>Код</span><strong>{{ shipment.code }}</strong></div>
-            <div><span>Перевізник</span><strong>{{ shipment.carrier_name or "—" }}</strong></div>
-            <div><span>Статус</span><strong><span class="status-badge logistics">{{ shipment.status }}</span></strong></div>
-            <div><span>Дата створення</span><strong>{{ shipment.created_date }}</strong></div>
-            <div><span>Дата відправки</span><strong>{{ shipment.sent_date or "—" }}</strong></div>
-            <div><span>Дата прибуття</span><strong>{{ shipment.arrival_date or "—" }}</strong></div>
-            <div><span>Трек номер</span><strong>{{ shipment.tracking_number or "—" }}</strong></div>
-            <div><span>Нотатка</span><strong>{{ shipment.note or "—" }}</strong></div>
+
+            <div>
+                <span>Код</span>
+                <strong>{{ shipment.code }}</strong>
+            </div>
+
+            <div>
+                <span>Перевізник</span>
+                <strong>{{ shipment.carrier_name or "—" }}</strong>
+            </div>
+
+            <div>
+                <span>Статус</span>
+                <strong>
+                    <span class="status-badge logistics">
+                        {{ shipment.status }}
+                    </span>
+                </strong>
+            </div>
+
+            <div>
+                <span>Дата створення</span>
+                <strong>{{ shipment.created_date }}</strong>
+            </div>
+
+            <div>
+                <span>Дата відправки</span>
+                <strong>{{ shipment.sent_date or "—" }}</strong>
+            </div>
+
+            <div>
+                <span>Дата прибуття</span>
+                <strong>{{ shipment.arrival_date or "—" }}</strong>
+            </div>
+
+            <div>
+                <span>Трек номер</span>
+                <strong>{{ shipment.tracking_number or "—" }}</strong>
+            </div>
+
+            <div>
+                <span>Нотатка</span>
+                <strong>{{ shipment.note or "—" }}</strong>
+            </div>
+
         </div>
     </section>
 
+
+
     <section class="detail-card">
         <h3>Аналітика партії</h3>
+
         <div class="detail-list">
-            <div><span>Телефонів</span><strong>{{ shipment.phones_count }}</strong></div>
-            <div><span>Продано</span><strong>{{ shipment.sold_count }}</strong></div>
-            <div><span>Залишилось</span><strong>{{ shipment.remaining_count }}</strong></div>
-            <div><span>Закупка</span><strong>€{{ "%.2f"|format(shipment.buy_total) }}</strong></div>
-            <div><span>Витрати</span><strong>€{{ "%.2f"|format(shipment.expenses_total) }}</strong></div>
-            <div><span>Виручка</span><strong>€{{ "%.2f"|format(shipment.revenue_total) }}</strong></div>
+
+            <div>
+                <span>Телефонів</span>
+                <strong>{{ shipment.phones_count }}</strong>
+            </div>
+
+            <div>
+                <span>Продано</span>
+                <strong>{{ shipment.sold_count }}</strong>
+            </div>
+
+            <div>
+                <span>Залишилось</span>
+                <strong>{{ shipment.remaining_count }}</strong>
+            </div>
+
+            <div>
+                <span>Закупка</span>
+                <strong>
+                    €{{ "%.2f"|format(shipment.buy_total or 0) }}
+                </strong>
+            </div>
+
+            <div>
+                <span>Витрати</span>
+                <strong>
+                    €{{ "%.2f"|format(shipment.expenses_total or 0) }}
+                </strong>
+            </div>
+
+            <div>
+                <span>Виручка</span>
+                <strong>
+                    €{{ "%.2f"|format(shipment.revenue_total or 0) }}
+                </strong>
+            </div>
+
+            <div>
+                <span>Середня покупка</span>
+                <strong>
+                    €{{ "%.2f"|format(shipment.avg_buy_price or 0) }}
+                </strong>
+            </div>
+
+            <div>
+                <span>Середній продаж</span>
+                <strong>
+                    €{{ "%.2f"|format(shipment.avg_sale_price or 0) }}
+                </strong>
+            </div>
+
+            <div>
+                <span>Середній прибуток / телефон</span>
+                <strong>
+                    <span class="avg-profit {% if shipment.avg_profit_per_phone >= 0 %}profit-positive{% else %}profit-negative{% endif %}">
+                        €{{ "%.2f"|format(shipment.avg_profit_per_phone or 0) }}
+                    </span>
+                </strong>
+            </div>
+
             <div>
                 <span>Прибуток</span>
                 <strong>
                     <span class="{% if shipment.profit >= 0 %}profit-positive{% else %}profit-negative{% endif %}">
-                        €{{ "%.2f"|format(shipment.profit) }}
+                        €{{ "%.2f"|format(shipment.profit or 0) }}
                     </span>
                 </strong>
             </div>
+
         </div>
     </section>
+
 </div>
 
+
+
 <section class="section-block">
+
     <div class="section-head">
         <h3>Телефони в партії</h3>
     </div>
 
+
     <div class="table-card">
         <div class="table-scroll">
+
             <table class="data-table">
+
                 <thead>
                     <tr>
                         <th>#</th>
@@ -73,13 +185,29 @@
                         <th>Відкрити</th>
                     </tr>
                 </thead>
+
                 <tbody>
+
                     {% for phone in phones %}
+
                     <tr>
-                        <td class="mono">#{{ phone.display_id }}</td>
-                        <td class="strong-cell">{{ phone.model }}</td>
-                        <td>{{ phone.storage }}</td>
-                        <td>€{{ "%.2f"|format(phone.buy_price) }}</td>
+
+                        <td class="mono">
+                            #{{ phone.display_id }}
+                        </td>
+
+                        <td class="strong-cell">
+                            {{ phone.model }}
+                        </td>
+
+                        <td>
+                            {{ phone.storage }}
+                        </td>
+
+                        <td>
+                            €{{ "%.2f"|format(phone.buy_price) }}
+                        </td>
+
                         <td>
                             {% if phone.sell_price is not none %}
                                 €{{ "%.2f"|format(phone.sell_price) }}
@@ -87,23 +215,38 @@
                                 <span class="muted">—</span>
                             {% endif %}
                         </td>
+
                         <td>
                             <span class="status-badge final {% if phone.final_status == 'sold' %}sold{% endif %}">
                                 {{ phone.final_status }}
                             </span>
                         </td>
+
                         <td>
-                            <a href="/web/phones/{{ phone.id }}" class="btn btn-secondary btn-small">Телефон</a>
+                            <a href="/web/phones/{{ phone.id }}" class="btn btn-secondary btn-small">
+                                Телефон
+                            </a>
+                        </td>
+
+                    </tr>
+
+                    {% else %}
+
+                    <tr>
+                        <td colspan="7" class="empty-state">
+                            У цій партії ще немає телефонів.
                         </td>
                     </tr>
-                    {% else %}
-                    <tr>
-                        <td colspan="7" class="empty-state">У цій партії ще немає телефонів.</td>
-                    </tr>
+
                     {% endfor %}
+
                 </tbody>
+
             </table>
+
         </div>
     </div>
+
 </section>
+
 {% endblock %}
