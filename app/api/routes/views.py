@@ -402,10 +402,6 @@ def web_phone_assign_shipment(
 
 @router.get("/web/shipments", response_class=HTMLResponse)
 def web_shipments(request: Request, db: Session = Depends(get_db)):
-    auth_redirect = require_login(request)
-    if auth_redirect:
-        return auth_redirect
-
     shipments = shipment_service.list_shipments(db)
     return templates.TemplateResponse(
         "shipments/list.html",
@@ -413,6 +409,25 @@ def web_shipments(request: Request, db: Session = Depends(get_db)):
             "request": request,
             "shipments": shipments,
             "warnings": [],
+        },
+    )
+
+
+@router.get("/web/shipments/{shipment_id}", response_class=HTMLResponse)
+def web_shipment_detail(shipment_id: int, request: Request, db: Session = Depends(get_db)):
+    shipment = shipment_service.get_shipment(db, shipment_id)
+    if shipment is None:
+        raise HTTPException(status_code=404, detail="Shipment not found")
+
+    return templates.TemplateResponse(
+        "shipments/detail.html",
+        {
+            "request": request,
+            "shipment": shipment,
+            "phones": getattr(shipment, "phones", []),
+            "warnings": [],
+            "success_message": None,
+            "error_message": None,
         },
     )
 

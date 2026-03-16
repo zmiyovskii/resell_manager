@@ -616,6 +616,10 @@ a {
 }
 
 .toast {
+    pointer-events: auto;
+}
+
+.toast {
     min-width: 280px;
     max-width: 380px;
     padding: 14px 16px;
