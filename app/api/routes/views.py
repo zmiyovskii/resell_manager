@@ -305,6 +305,7 @@ def web_phone_return(
 
     return RedirectResponse(url=f"/web/phones/{phone_id}", status_code=303)
 
+
 @router.post("/web/phones/{phone_id}/quick-logistics-status", response_class=HTMLResponse)
 def web_phone_quick_logistics_status(
     phone_id: int,
@@ -312,6 +313,10 @@ def web_phone_quick_logistics_status(
     logistics_status: str = Form(...),
     db: Session = Depends(get_db),
 ):
+    auth_redirect = require_login(request)
+    if auth_redirect:
+        return auth_redirect
+
     phone = phone_service.set_logistics_status(db, phone_id, logistics_status)
     if phone is None:
         raise HTTPException(status_code=404, detail="Phone not found")
@@ -326,6 +331,10 @@ def web_phone_quick_work_status(
     work_status: str = Form(...),
     db: Session = Depends(get_db),
 ):
+    auth_redirect = require_login(request)
+    if auth_redirect:
+        return auth_redirect
+
     phone = phone_service.set_work_status(db, phone_id, work_status)
     if phone is None:
         raise HTTPException(status_code=404, detail="Phone not found")
@@ -340,11 +349,16 @@ def web_phone_quick_final_status(
     final_status: str = Form(...),
     db: Session = Depends(get_db),
 ):
+    auth_redirect = require_login(request)
+    if auth_redirect:
+        return auth_redirect
+
     phone = phone_service.set_final_status(db, phone_id, final_status)
     if phone is None:
         raise HTTPException(status_code=404, detail="Phone not found")
 
     return RedirectResponse(url=f"/web/phones/{phone_id}", status_code=303)
+
 
 @router.post("/web/phones/{phone_id}/expense", response_class=HTMLResponse)
 def web_phone_add_expense(
@@ -375,7 +389,7 @@ def web_phone_add_expense(
 def web_phone_assign_shipment(
     phone_id: int,
     request: Request,
-    shipment_id: str = Form(...),
+    shipment_id: int = Form(...),
     carrier_fee: str = Form(""),
     expense_date: date = Form(...),
     db: Session = Depends(get_db),
@@ -400,8 +414,16 @@ def web_phone_assign_shipment(
     return RedirectResponse(url=f"/web/phones/{phone_id}", status_code=303)
 
 
+# =========================
+# SHIPMENTS
+# =========================
+
 @router.get("/web/shipments", response_class=HTMLResponse)
 def web_shipments(request: Request, db: Session = Depends(get_db)):
+    auth_redirect = require_login(request)
+    if auth_redirect:
+        return auth_redirect
+
     shipments = shipment_service.list_shipments(db)
     return templates.TemplateResponse(
         "shipments/list.html",
@@ -409,25 +431,6 @@ def web_shipments(request: Request, db: Session = Depends(get_db)):
             "request": request,
             "shipments": shipments,
             "warnings": [],
-        },
-    )
-
-
-@router.get("/web/shipments/{shipment_id}", response_class=HTMLResponse)
-def web_shipment_detail(shipment_id: int, request: Request, db: Session = Depends(get_db)):
-    shipment = shipment_service.get_shipment(db, shipment_id)
-    if shipment is None:
-        raise HTTPException(status_code=404, detail="Shipment not found")
-
-    return templates.TemplateResponse(
-        "shipments/detail.html",
-        {
-            "request": request,
-            "shipment": shipment,
-            "phones": getattr(shipment, "phones", []),
-            "warnings": [],
-            "success_message": None,
-            "error_message": None,
         },
     )
 
@@ -500,23 +503,6 @@ def web_shipment_edit_page(shipment_id: int, request: Request, db: Session = Dep
     )
 
 
-@router.post("/web/shipments/{shipment_id}/delete", response_class=HTMLResponse)
-def web_shipment_delete(
-    shipment_id: int,
-    request: Request,
-    db: Session = Depends(get_db),
-):
-    auth_redirect = require_login(request)
-    if auth_redirect:
-        return auth_redirect
-
-    deleted = shipment_service.delete_shipment(db, shipment_id)
-    if not deleted:
-        raise HTTPException(status_code=404, detail="Shipment not found")
-
-    return RedirectResponse(url="/web/shipments", status_code=303)
-
-
 @router.post("/web/shipments/{shipment_id}/edit", response_class=HTMLResponse)
 def web_shipment_edit(
     shipment_id: int,
@@ -552,6 +538,46 @@ def web_shipment_edit(
         raise HTTPException(status_code=404, detail="Shipment not found")
 
     return RedirectResponse(url="/web/shipments", status_code=303)
+
+
+@router.post("/web/shipments/{shipment_id}/delete", response_class=HTMLResponse)
+def web_shipment_delete(
+    shipment_id: int,
+    request: Request,
+    db: Session = Depends(get_db),
+):
+    auth_redirect = require_login(request)
+    if auth_redirect:
+        return auth_redirect
+
+    deleted = shipment_service.delete_shipment(db, shipment_id)
+    if not deleted:
+        raise HTTPException(status_code=404, detail="Shipment not found")
+
+    return RedirectResponse(url="/web/shipments", status_code=303)
+
+
+@router.get("/web/shipments/{shipment_id}", response_class=HTMLResponse)
+def web_shipment_detail(shipment_id: int, request: Request, db: Session = Depends(get_db)):
+    auth_redirect = require_login(request)
+    if auth_redirect:
+        return auth_redirect
+
+    shipment = shipment_service.get_shipment(db, shipment_id)
+    if shipment is None:
+        raise HTTPException(status_code=404, detail="Shipment not found")
+
+    return templates.TemplateResponse(
+        "shipments/detail.html",
+        {
+            "request": request,
+            "shipment": shipment,
+            "phones": getattr(shipment, "phones", []),
+            "warnings": [],
+            "success_message": None,
+            "error_message": None,
+        },
+    )
 
 
 @router.get("/web/expenses", response_class=HTMLResponse)
