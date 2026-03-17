@@ -503,6 +503,29 @@ def web_shipment_edit_page(shipment_id: int, request: Request, db: Session = Dep
     )
 
 
+@router.get("/web/shipments/{shipment_id}", response_class=HTMLResponse)
+def web_shipment_detail(shipment_id: int, request: Request, db: Session = Depends(get_db)):
+    auth_redirect = require_login(request)
+    if auth_redirect:
+        return auth_redirect
+
+    shipment = shipment_service.get_shipment(db, shipment_id)
+    if shipment is None:
+        raise HTTPException(status_code=404, detail="Shipment not found")
+
+    return templates.TemplateResponse(
+        "shipments/detail.html",
+        {
+            "request": request,
+            "shipment": shipment,
+            "phones": getattr(shipment, "phones", []),
+            "warnings": [],
+            "success_message": None,
+            "error_message": None,
+        },
+    )
+
+
 @router.post("/web/shipments/{shipment_id}/edit", response_class=HTMLResponse)
 def web_shipment_edit(
     shipment_id: int,
@@ -555,29 +578,6 @@ def web_shipment_delete(
         raise HTTPException(status_code=404, detail="Shipment not found")
 
     return RedirectResponse(url="/web/shipments", status_code=303)
-
-
-@router.get("/web/shipments/{shipment_id}", response_class=HTMLResponse)
-def web_shipment_detail(shipment_id: int, request: Request, db: Session = Depends(get_db)):
-    auth_redirect = require_login(request)
-    if auth_redirect:
-        return auth_redirect
-
-    shipment = shipment_service.get_shipment(db, shipment_id)
-    if shipment is None:
-        raise HTTPException(status_code=404, detail="Shipment not found")
-
-    return templates.TemplateResponse(
-        "shipments/detail.html",
-        {
-            "request": request,
-            "shipment": shipment,
-            "phones": getattr(shipment, "phones", []),
-            "warnings": [],
-            "success_message": None,
-            "error_message": None,
-        },
-    )
 
 
 @router.get("/web/expenses", response_class=HTMLResponse)
