@@ -1,4 +1,3 @@
-from datetime import datetime
 from typing import Sequence
 
 from sqlalchemy import select
@@ -10,7 +9,7 @@ from app.schemas.phone import PhoneCreate, PhoneUpdate
 
 class PhoneRepository:
     def get_next_display_id(self, db: Session) -> int:
-        stmt = select(Phone).where(Phone.deleted_at.is_(None)).order_by(Phone.display_id.desc())
+        stmt = select(Phone).order_by(Phone.display_id.desc())
         last_phone = db.execute(stmt).scalars().first()
         return 1 if last_phone is None else last_phone.display_id + 1
 
@@ -36,7 +35,6 @@ class PhoneRepository:
     def list_all(self, db: Session) -> Sequence[Phone]:
         stmt = (
             select(Phone)
-            .where(Phone.deleted_at.is_(None))
             .order_by(Phone.display_id.desc())
         )
         return db.execute(stmt).scalars().all()
@@ -49,7 +47,6 @@ class PhoneRepository:
     def get_by_id(self, db: Session, phone_id: int) -> Phone | None:
         stmt = select(Phone).where(
             Phone.id == phone_id,
-            Phone.deleted_at.is_(None),
         )
         return db.execute(stmt).scalars().first()
 
@@ -64,18 +61,11 @@ class PhoneRepository:
         db.refresh(phone)
         return phone
 
-    def soft_delete(self, db: Session, phone: Phone) -> Phone:
-        phone.deleted_at = datetime.utcnow()
-        db.add(phone)
-        db.commit()
-        db.refresh(phone)
-        return phone
-
     def get_by_display_id(self, db: Session, display_id: int) -> Phone | None:
         stmt = select(Phone).where(
             Phone.display_id == display_id,
-            Phone.deleted_at.is_(None),
         )
         return db.execute(stmt).scalars().first()
+
 
 phone_repository = PhoneRepository()

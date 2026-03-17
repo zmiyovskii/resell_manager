@@ -1,10 +1,7 @@
-from datetime import datetime
 from typing import Sequence
 
-from sqlalchemy import select
+from sqlalchemy import delete, select
 from sqlalchemy.orm import Session
-
-from sqlalchemy import delete
 
 from app.models.inventory_item import InventoryItem
 from app.models.inventory_movement import InventoryMovement
@@ -26,7 +23,6 @@ class InventoryRepository:
     def get_item_by_name(self, db: Session, name: str) -> InventoryItem | None:
         stmt = select(InventoryItem).where(
             InventoryItem.name == name,
-            InventoryItem.deleted_at.is_(None),
         )
         return db.execute(stmt).scalars().first()
 
@@ -48,7 +44,6 @@ class InventoryRepository:
     def list_items(self, db: Session) -> Sequence[InventoryItem]:
         stmt = (
             select(InventoryItem)
-            .where(InventoryItem.deleted_at.is_(None))
             .order_by(InventoryItem.name.asc())
         )
         return db.execute(stmt).scalars().all()
@@ -56,7 +51,6 @@ class InventoryRepository:
     def get_item(self, db: Session, item_id: int) -> InventoryItem | None:
         stmt = select(InventoryItem).where(
             InventoryItem.id == item_id,
-            InventoryItem.deleted_at.is_(None),
         )
         return db.execute(stmt).scalars().first()
 
@@ -70,10 +64,6 @@ class InventoryRepository:
         db.commit()
         db.refresh(item)
         return item
-
-    def delete_item(self, db: Session, item: InventoryItem):
-        db.delete(item)
-        db.commit()
 
     def create_movement(
         self,
@@ -98,17 +88,9 @@ class InventoryRepository:
         db.refresh(movement)
         return movement
 
-    def soft_delete_item(self, db: Session, item: InventoryItem) -> InventoryItem:
-        item.deleted_at = datetime.utcnow()
-        db.add(item)
-        db.commit()
-        db.refresh(item)
-        return item
-
     def list_movements(self, db: Session, item_id: int | None = None) -> Sequence[InventoryMovement]:
         stmt = (
             select(InventoryMovement)
-            .where(InventoryMovement.deleted_at.is_(None))
             .order_by(InventoryMovement.id.desc())
         )
 

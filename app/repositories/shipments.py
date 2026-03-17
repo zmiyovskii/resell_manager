@@ -1,4 +1,3 @@
-from datetime import datetime
 from typing import Sequence
 
 from sqlalchemy import select
@@ -29,7 +28,6 @@ class ShipmentRepository:
     def list_all(self, db: Session) -> Sequence[Shipment]:
         stmt = (
             select(Shipment)
-            .where(Shipment.deleted_at.is_(None))
             .order_by(Shipment.id.desc())
         )
         return db.execute(stmt).scalars().all()
@@ -37,7 +35,6 @@ class ShipmentRepository:
     def get_by_id(self, db: Session, shipment_id: int) -> Shipment | None:
         stmt = select(Shipment).where(
             Shipment.id == shipment_id,
-            Shipment.deleted_at.is_(None),
         )
         return db.execute(stmt).scalars().first()
 
@@ -57,17 +54,9 @@ class ShipmentRepository:
         db.refresh(shipment)
         return shipment
 
-    def soft_delete(self, db: Session, shipment: Shipment) -> Shipment:
-        shipment.deleted_at = datetime.utcnow()
-        db.add(shipment)
-        db.commit()
-        db.refresh(shipment)
-        return shipment
-
     def get_by_code(self, db: Session, code: str) -> Shipment | None:
         stmt = select(Shipment).where(
             Shipment.code == code,
-            Shipment.deleted_at.is_(None),
         )
         return db.execute(stmt).scalars().first()
 

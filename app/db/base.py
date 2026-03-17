@@ -17,4 +17,3 @@ class TimestampMixin:
         onupdate=datetime.utcnow,
         nullable=False,
     )
-    deleted_at: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
