@@ -14,10 +14,7 @@ class ShipmentService:
     def _attach_shipment_stats(self, db: Session, shipment):
         phones = db.execute(
             select(Phone)
-            .where(
-                Phone.shipment_id == shipment.id,
-                Phone.deleted_at.is_(None),
-            )
+            .where(Phone.shipment_id == shipment.id)
             .order_by(Phone.display_id.asc())
         ).scalars().all()
 
@@ -84,12 +81,22 @@ class ShipmentService:
         shipment = shipment_repository.update(db, shipment, shipment_in)
         return self._attach_shipment_stats(db, shipment)
 
-    def delete_shipment(self, db: Session, shipment_id: int):
+    def delete_shipment(self, db: Session, shipment_id: int) -> bool:
         shipment = shipment_repository.get_by_id(db, shipment_id)
         if shipment is None:
-            return None
+            return False
 
-        return shipment_repository.soft_delete(db, shipment)
+        expense_repository.delete_by_shipment_id(db, shipment_id)
+
+        phones = phone_repository.list_all(db)
+        for phone in phones:
+            if phone.shipment_id == shipment_id:
+                phone.shipment_id = None
+                db.add(phone)
+
+        db.commit()
+        shipment_repository.delete(db, shipment)
+        return True
 
     def assign_phone_to_shipment(self, db: Session, phone_id: int, assign_in: AssignShipmentRequest):
         phone = phone_repository.get_by_id(db, phone_id)
